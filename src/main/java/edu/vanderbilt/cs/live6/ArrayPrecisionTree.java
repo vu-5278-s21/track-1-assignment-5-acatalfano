@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+
 public class ArrayPrecisionTree<T extends Collection<?>> implements PrecisionTree<T> {
     private final int resolution;
     private final List<T> precisionTree;

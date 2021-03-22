@@ -109,19 +109,10 @@ public class GeoHashImpl implements GeoHash {
         return Objects.hashCode(geoHash);
     }
 
-    public String toString() {
-        return GeoHashImpl.hashAsString(geoHash);
-    }
-
-    private static String hashAsString(List<Boolean> hash) {
-        return hash
-            .stream()
-            .reduce(
-                "",
-                (accum, bit) -> accum + (bit ? '1' : '0'),
-                (lhs, rhs) -> lhs + rhs
-            );
-    }
+    //@Override
+    // public String toString() {
+    //     return GeoHashImpl.hashAsString(geoHash);
+    // }
 
     private List<Boolean> latitudeHash() {
         List<Boolean> latHash = new ArrayList<>();
@@ -188,6 +179,16 @@ public class GeoHashImpl implements GeoHash {
         private static String zeroPaddedBitString(int value) {
             String bitString = Integer.toBinaryString(value);
             return String.format("%32s", bitString).replace(" ", "0");
+        }
+
+        private static String hashAsString(List<Boolean> hash) {
+            return hash
+                .stream()
+                .reduce(
+                    "",
+                    (accum, bit) -> accum + (bit ? '1' : '0'),
+                    (lhs, rhs) -> lhs + rhs
+                );
         }
     }
 

@@ -1,9 +1,11 @@
 package edu.vanderbilt.cs.live6;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class ProximityDbTree<T> implements ProximityDB<T> {
     private final int resolution;
@@ -81,22 +83,19 @@ public class ProximityDbTree<T> implements ProximityDB<T> {
             .collect(Collectors.toList());
     }
 
-    /**
-     * @ToDo: implement
-     * 
-     * @return an empty instance of the DB with the same settings (e.g., bits, hash
-     *             factory, etc.) as this instance. However, the clone will contain no
-     *             data.
-     *
-     */
     @Override
     public ProximityDB<T> emptyClone() {
         return new ProximityDbTree<>(precisionTreeFactory, geoHashFactory, resolution);
     }
 
     private String treeLocationCode(Position pos, int precision) {
-        return geoHashFactory
+        Iterator<Boolean> geohashIterator = geoHashFactory
             .with(pos.getLatitude(), pos.getLongitude(), precision)
-            .toString();
+            .iterator();
+        StringBuilder geohashString = new StringBuilder();
+        while(geohashIterator.hasNext()) {
+            geohashString.append(geohashIterator.next().booleanValue() ? '1' : '0');
+        }
+        return geohashString.toString();
     }
 }

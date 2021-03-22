@@ -8,12 +8,10 @@ public class ProximityDBFactory {
      * 
      * @return
      */
-    public <T> ProximityDB<T> create(int bits) {
+    public <T> ProximityDB<T> create(GeoHashFactory hashFactory, int bits) {
         final PrecisionTreeFactory<Collection<GeohashEntry<T>>> precisionTreeFactory =
             new ArrayListPrecisionTreeFactory<>();
-        return new ProximityDbTree<>(
-            precisionTreeFactory, new GeoHashFactoryImpl(), bits
-        );
+        return new ProximityDbTree<>(precisionTreeFactory, hashFactory, bits);
     }
 
 }

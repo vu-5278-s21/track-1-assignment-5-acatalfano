@@ -1,5 +1,11 @@
-package edu.vanderbilt.cs.live6;
+package edu.vanderbilt.cs.live7;
 
+import edu.vanderbilt.cs.live6.DataAndPosition;
+import edu.vanderbilt.cs.live6.GeoHashFactory;
+import edu.vanderbilt.cs.live6.GeoHashFactoryImpl;
+import edu.vanderbilt.cs.live6.Position;
+import edu.vanderbilt.cs.live6.ProximityDB;
+import edu.vanderbilt.cs.live6.ProximityDBFactory;
 import edu.vanderbilt.cs.live7.example.Building;
 
 import org.junit.jupiter.api.Test;
@@ -11,15 +17,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.Collection;
 import java.util.Iterator;
 
-public class ProximityDBTest {
-
-    private ProximityDBFactory factory = new ProximityDBFactory();
+public class ProximityStreamDB_ProximityDBTest {
+    private ProximityStreamDBFactory factory = new ProximityStreamDBFactory();
     private GeoHashFactory hashFactory = new GeoHashFactoryImpl();
 
     @Test
     public void testSimpleInsert() {
         int bitsOfPrecision = 16;
-        ProximityDB<Building> db = factory.create(hashFactory, bitsOfPrecision);
+        ProximityDB<Building> db = factory.create(null, hashFactory, bitsOfPrecision);
         Building b = new Building("test", 100, 5);
         db.insert(DataAndPosition.with(0, 0, b));
 
@@ -31,7 +36,7 @@ public class ProximityDBTest {
     @Test
     public void testSimpleDelete() {
         int bitsOfPrecision = 16;
-        ProximityDB<Building> db = factory.create(hashFactory, bitsOfPrecision);
+        ProximityDB<Building> db = factory.create(null, hashFactory, bitsOfPrecision);
         Building b = new Building("test", 100, 5);
         db.insert(DataAndPosition.with(0, 0, b));
         db.delete(Position.with(0, 0));
@@ -43,7 +48,7 @@ public class ProximityDBTest {
 
     @Test
     public void testZeroBits() {
-        ProximityDB<Building> db = factory.create(hashFactory, 16);
+        ProximityDB<Building> db = factory.create(null, hashFactory, 16);
         Building b = new Building("test", 100, 5);
         db.insert(DataAndPosition.with(0, 0, b));
         db.insert(DataAndPosition.with(90, 180, b));
@@ -56,7 +61,7 @@ public class ProximityDBTest {
 
     @Test
     public void testZeroBitsDelete() {
-        ProximityDB<Building> db = factory.create(hashFactory, 16);
+        ProximityDB<Building> db = factory.create(null, hashFactory, 16);
         Building b = new Building("test", 100, 5);
         db.insert(DataAndPosition.with(0, 0, b));
         db.insert(DataAndPosition.with(90, 180, b));
@@ -72,7 +77,7 @@ public class ProximityDBTest {
     @Test
     public void testInsertDeleteSeries() {
 
-        ProximityDB<Building> db = factory.create(hashFactory, 16);
+        ProximityDB<Building> db = factory.create(null, hashFactory, 16);
         Building b = new Building("test", 100, 5);
         db.insert(DataAndPosition.with(0, 0, b));
         db.insert(DataAndPosition.with(90, 180, b));
@@ -102,7 +107,7 @@ public class ProximityDBTest {
 
     @Test
     public void testInsertAtSamePosition() {
-        ProximityDB<Building> db = factory.create(hashFactory, 16);
+        ProximityDB<Building> db = factory.create(null, hashFactory, 16);
         Building b1 = new Building("first building", 100, 10);
         Building b2 = new Building("second building", 200, 20);
         db.insert(DataAndPosition.with(0, 0, b1));
@@ -115,3 +120,4 @@ public class ProximityDBTest {
     }
 
 }
+

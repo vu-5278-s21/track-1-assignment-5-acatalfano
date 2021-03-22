@@ -14,9 +14,12 @@ public class BuildingAttributesStrategy implements AttributesStrategy<Building> 
 
     @Override
     public Collection<Attribute> getAttributes(Building data) {
-        Attribute sqft = new Attribute(SIZE_IN_SQUARE_FEET, Double.class, data.getSizeInSquareFeet());
-        Attribute classrooms = new Attribute(CLASSROOMS, Double.class, data.getClassRooms());
-        Attribute name = new Attribute(NAME, String.class, data.getName());
+        Attribute<Double> sqft = new Attribute<>(
+            SIZE_IN_SQUARE_FEET, Double.class, data.getSizeInSquareFeet()
+        );
+        Attribute<Double> classrooms =
+            new Attribute<>(CLASSROOMS, Double.class, data.getClassRooms());
+        Attribute<String> name = new Attribute<>(NAME, String.class, data.getName());
 
         return Arrays.asList(sqft, classrooms, name);
     }
