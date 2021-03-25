@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class ProximityDbTree<T> implements ProximityDB<T> {
     private final int resolution;
@@ -78,6 +77,7 @@ public class ProximityDbTree<T> implements ProximityDB<T> {
         return geoTree
             .itemsWithinRange(treeLocationCode(pos, bitsOfPrecision), bitsOfPrecision)
             .filter(Objects::nonNull)
+            .filter(x -> !x.isEmpty())
             .flatMap(Collection::stream)
             .map(GeohashEntry::getDataAndPosition)
             .collect(Collectors.toList());

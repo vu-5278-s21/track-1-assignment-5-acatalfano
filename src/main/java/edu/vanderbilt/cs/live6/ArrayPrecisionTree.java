@@ -1,46 +1,65 @@
 package edu.vanderbilt.cs.live6;
 
-import java.util.ArrayList;
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-
+import java.util.stream.Stream.Builder;
 
 public class ArrayPrecisionTree<T extends Collection<?>> implements PrecisionTree<T> {
     private final int resolution;
-    private final List<T> precisionTree;
+    private final NavigableMap<BigInteger, T> precisionTree;
+    private final Supplier<T> treeNodeFactory;
 
     public ArrayPrecisionTree(
         int resolutionValue,
         Supplier<T> supplier
     ) {
         resolution = resolutionValue;
-        final int capacity = (int)Math.pow(2, resolution);
-        precisionTree = new ArrayList<>();
-        for(int i = 0; i < capacity; i++) {
-            precisionTree.add(supplier.get());
-        }
+        precisionTree = new TreeMap<>();
+        treeNodeFactory = supplier;
     }
 
     @Override
     public Stream<T> itemsWithinRange(String locationCodePrefix, int precision) {
-        int startIndex = rangeStartIndex(locationCodePrefix, precision);
-        int endIndex = rangeEndIndex(startIndex, precision);
-        return precisionTree.subList(startIndex, endIndex).stream();
+        Builder<T> streamBuilder = Stream.builder();
+        BigInteger startIndex = rangeStartIndex(locationCodePrefix, precision)
+            .subtract(BigInteger.ONE);
+        BigInteger endIndex = rangeEndIndex(startIndex, precision);
+
+        Map.Entry<BigInteger, T> nextEntry = precisionTree.higherEntry(startIndex);
+
+        while(nextEntry != null && nextEntry.getKey().compareTo(endIndex) <= 0) {
+            if (!nextEntry.getValue().isEmpty()) {
+                streamBuilder.accept(nextEntry.getValue());
+            }
+            nextEntry = precisionTree.higherEntry(nextEntry.getKey());
+        }
+        return streamBuilder.build();
     }
 
     @Override
     public T itemsAtLocation(String locationCode) {
-        return precisionTree.get(index(locationCode));
+        T items;
+        BigInteger index = index(locationCode);
+        if (precisionTree.get(index) == null) {
+            items = treeNodeFactory.get();
+            precisionTree.put(index, items);
+        } else {
+            items = precisionTree.get(index);
+        }
+        return items;
     }
 
     /**
      * @Return index in the physical list where the provided position should be stored (as
      *             per underlying tree semantics)
      */
-    private int index(String locationCode) {
+    private BigInteger index(String locationCode) {
         return rangeStartIndex(locationCode, resolution);
     }
 
@@ -50,12 +69,12 @@ public class ArrayPrecisionTree<T extends Collection<?>> implements PrecisionTre
      * 
      * @Assume precision <= resolution
      */
-    private int rangeStartIndex(
+    private BigInteger rangeStartIndex(
         String locationCode,
         int precision
     ) {
         String geohashString = zeroPaddedBitString(locationCode, precision);
-        return Integer.parseInt(geohashString, 2);
+        return new BigInteger(geohashString, 2);
     }
 
     /**
@@ -64,11 +83,11 @@ public class ArrayPrecisionTree<T extends Collection<?>> implements PrecisionTre
      * 
      * @Assume precision <= resolution
      */
-    private int rangeEndIndex(
-        int startIndex,
+    private BigInteger rangeEndIndex(
+        BigInteger startIndex,
         int precision
     ) {
-        return (int)Math.pow(2, (resolution - precision)) + startIndex;
+        return BigInteger.TWO.pow(resolution - precision).add(startIndex);
     }
 
     /**
