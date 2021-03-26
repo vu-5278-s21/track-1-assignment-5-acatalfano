@@ -1,12 +1,11 @@
 package edu.vanderbilt.cs.live6;
 
 /**
- * DataAndPosition binds a latitude / longitude location to a
- * specific piece of data, such as a Building object, String,
- * RealEstateListing object, Map, etc.
+ * DataAndPosition binds a latitude / longitude location to a specific piece of data, such
+ * as a Building object, String, RealEstateListing object, Map, etc.
  *
- * DataAndPosition<Map<String,String>> positionedMap =
- *                 DataAndPosition.with(0, 0, new HashMap<String,String>());
+ * DataAndPosition<Map<String,String>> positionedMap = DataAndPosition.with(0, 0, new
+ * HashMap<String,String>());
  *
  * public class Foo {...}
  *
@@ -17,8 +16,8 @@ package edu.vanderbilt.cs.live6;
  */
 public interface DataAndPosition<T> extends Position {
 
-    public static <T> DataAndPosition<T> with(double lat, double lon, T data){
-        return new DataAndPosition() {
+    public static <T> DataAndPosition<T> with(double lat, double lon, T data) {
+        return new DataAndPosition<T>() {
 
             @Override
             public double getLatitude() {
@@ -31,7 +30,9 @@ public interface DataAndPosition<T> extends Position {
             }
 
             @Override
-            public Object getData() { return data; }
+            public T getData() {
+                return data;
+            }
         };
     }
 

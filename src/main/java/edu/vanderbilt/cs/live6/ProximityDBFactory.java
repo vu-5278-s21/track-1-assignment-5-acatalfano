@@ -1,19 +1,17 @@
 package edu.vanderbilt.cs.live6;
 
-
+import java.util.Collection;
 
 public class ProximityDBFactory {
-
     /**
-     * @ToDo:
-     *
-     * Fiil this in to create one of your implementations
-     *
      * @param <T>
+     * 
      * @return
      */
-    public <T> ProximityDB<T> create(GeoHashFactory hashFactory, int bits){
-        return null;
+    public <T> ProximityDB<T> create(GeoHashFactory hashFactory, int bits) {
+        final PrecisionTreeFactory<Collection<GeohashEntry<T>>> precisionTreeFactory =
+            new ArrayListPrecisionTreeFactory<>();
+        return new ProximityDbTree<>(precisionTreeFactory, hashFactory, bits);
     }
 
 }
